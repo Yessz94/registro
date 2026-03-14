@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de usuarios</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="container">
+    <section class="card">
+      <h1>Registrar nuevo usuario</h1>
+      <form id="registro-form" autocomplete="off">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" name="nombre" type="text" required minlength="2" placeholder="Ingresa el nombre completo">
+
+        <label for="correo">Correo electrónico</label>
+        <input id="correo" name="correo" type="email" required placeholder="correo@ejemplo.com">
+
+        <label for="contrasena">Contraseña</label>
+        <input id="contrasena" name="contrasena" type="password" required minlength="6" placeholder="Mínimo 6 caracteres">
+
+        <button type="submit">Registrar usuario</button>
+      </form>
+      <p id="mensaje" class="mensaje" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>Dashboard de personas registradas</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>Correo</th>
+            </tr>
+          </thead>
+          <tbody id="usuarios-body">
+            <tr>
+              <td colspan="3" class="sin-registros">Aún no hay usuarios registrados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
