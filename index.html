@@ -3,43 +3,129 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de usuarios</title>
+  <title>Planificador académico</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main class="container">
+    <header class="hero card">
+      <h1>Planificador académico</h1>
+      <p>Registra periodo, turno, docentes, aulas y carga clases por CSV.</p>
+    </header>
+
     <section class="card">
-      <h1>Registrar nuevo usuario</h1>
-      <form id="registro-form" autocomplete="off">
-        <label for="nombre">Nombre</label>
-        <input id="nombre" name="nombre" type="text" required minlength="2" placeholder="Ingresa el nombre completo">
-
-        <label for="correo">Correo electrónico</label>
-        <input id="correo" name="correo" type="email" required placeholder="correo@ejemplo.com">
-
-        <label for="contrasena">Contraseña</label>
-        <input id="contrasena" name="contrasena" type="password" required minlength="6" placeholder="Mínimo 6 caracteres">
-
-        <button type="submit">Registrar usuario</button>
+      <h2>1) Registrar periodo</h2>
+      <form id="periodo-form" class="grid-form" autocomplete="off">
+        <input name="nombre" type="text" placeholder="Nombre (I, II, III)" required>
+        <input name="fechaInicio" type="date" required>
+        <input name="fechaFin" type="date" required>
+        <input name="anio" type="number" min="2020" max="2100" placeholder="Año" required>
+        <button type="submit">Guardar periodo</button>
       </form>
-      <p id="mensaje" class="mensaje" aria-live="polite"></p>
+      <p id="periodo-msg" class="mensaje" aria-live="polite"></p>
     </section>
 
     <section class="card">
-      <h2>Dashboard de personas registradas</h2>
+      <h2>2) Registrar turno</h2>
+      <form id="turno-form" class="grid-form" autocomplete="off">
+        <input name="nombre" type="text" placeholder="Turno (Sabatino, Nocturno...)" required>
+        <input name="minBloque" type="number" min="1" placeholder="Min por bloque" required>
+        <input name="creditosBloque" type="number" min="1" placeholder="Créditos por bloque" required>
+        <label>Hora entrada <input name="horaEntrada" type="time" required></label>
+        <label>Hora salida <input name="horaSalida" type="time" required></label>
+        <label>Almuerzo inicio <input name="almuerzoInicio" type="time"></label>
+        <label>Almuerzo fin <input name="almuerzoFin" type="time"></label>
+
+        <fieldset>
+          <legend>Días hábiles y periodos por día</legend>
+          <div id="dias-container" class="dias-grid"></div>
+        </fieldset>
+
+        <button type="submit">Guardar turno</button>
+      </form>
+      <p id="turno-msg" class="mensaje" aria-live="polite"></p>
+    </section>
+
+    <section class="card cols-2">
+      <div>
+        <h2>3) Registrar docente</h2>
+        <form id="docente-form" class="grid-form" autocomplete="off">
+          <input name="nombre" type="text" placeholder="Nombre docente" required>
+          <input name="especialidad" type="text" placeholder="Especialidad" required>
+          <button type="submit">Guardar docente</button>
+        </form>
+        <p id="docente-msg" class="mensaje" aria-live="polite"></p>
+      </div>
+
+      <div>
+        <h2>4) Registrar aula</h2>
+        <form id="aula-form" class="grid-form" autocomplete="off">
+          <input name="nombre" type="text" placeholder="Nombre/Id aula" required>
+          <select name="tipo" required>
+            <option value="">Tipo de aula</option>
+            <option value="Lab">Lab</option>
+            <option value="Taller">Taller</option>
+            <option value="Aula">Aula</option>
+          </select>
+          <button type="submit">Guardar aula</button>
+        </form>
+        <p id="aula-msg" class="mensaje" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>5) Cargar CSV de clases</h2>
+      <p class="hint">Formato esperado: <code>nombre,especialidad,tipo,credito</code></p>
+      <form id="csv-form" class="grid-form" autocomplete="off">
+        <textarea name="csv" rows="6" placeholder="Ejemplo:
+Matemática I,Matemática,Aula,3
+Programación I,Programación,Lab,4" required></textarea>
+        <button type="submit">Importar clases</button>
+      </form>
+      <p id="csv-msg" class="mensaje" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>Resumen de clases</h2>
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
-              <th>#</th>
-              <th>Nombre</th>
-              <th>Correo</th>
+              <th>Clase</th>
+              <th>Especialidad</th>
+              <th>Tipo</th>
+              <th>Crédito</th>
+              <th>Docente</th>
+              <th>Aula</th>
             </tr>
           </thead>
-          <tbody id="usuarios-body">
+          <tbody id="clases-body">
+            <tr><td colspan="6" class="sin-registros">No hay clases cargadas.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>6) Generar horario automático (sin conflicto de maestro)</h2>
+      <form id="horario-form" class="grid-form" autocomplete="off">
+        <select id="turno-select" name="turnoId" required></select>
+        <button type="submit">Generar horario</button>
+      </form>
+      <p id="horario-msg" class="mensaje" aria-live="polite"></p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
             <tr>
-              <td colspan="3" class="sin-registros">Aún no hay usuarios registrados.</td>
+              <th>Día</th>
+              <th>Bloque</th>
+              <th>Hora</th>
+              <th>Clases programadas</th>
             </tr>
+          </thead>
+          <tbody id="horario-body">
+            <tr><td colspan="4" class="sin-registros">Aún no se ha generado horario.</td></tr>
           </tbody>
         </table>
       </div>
